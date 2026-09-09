@@ -4,10 +4,18 @@ const responseHandler = require('./responses.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-
+  "/": responseHandler.getIndex,
+  "/cats": responseHandler.getCats,
+  default: responseHandler.getIndex,
 };
 
 const onRequest = (request, response) => {
+  const protocol = request.connection.encrypted ? 'https' : 'http';
+  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+  // console.log(parsedUrl);
+
+  const handler = urlStruct[parsedUrl.pathname];
+  handler ? handler(request, response) : urlStruct.default(request, response);
 
 };
 
