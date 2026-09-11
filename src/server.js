@@ -12,9 +12,13 @@ const urlStruct = {
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+  
   // console.log(parsedUrl);
 
+  request.acceptedTypes = request.headers.accept ? request.headers.accept.split(',') : [];
+
   const handler = urlStruct[parsedUrl.pathname];
+
   handler ? handler(request, response) : urlStruct.default(request, response);
 
 };
